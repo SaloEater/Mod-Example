@@ -61,106 +61,73 @@ function ph_item_box:__init()
 	end
 end
 
-function ph_item_box:spawn_small_items(obj,who,spawn_ini)
-	local community_small
+function ph_item_box:get_spawn_list(boxCommunity, availableCommunities, boxes)
 	if (spawn_ini) then -- Disabled hardcoded items
 		--create_obligatory_items(obj,spawn_ini)
 		--community = spawn_ini:r_string_ex("drop_box","community")
 	end
 
-	if (community_small == nil or community_small == "def_box" or community_small == "small_box_generic" or community_small == "small_box_full" or community_small == "small_box_ussr" or community_small == "small_box_nato" or community_small == "small_box_army") then
-		local item_small = {"def_box", "small_box_generic", "small_box_full", "small_box_ussr", "small_box_nato", "small_box_army"}
-		community_small = item_small[math.random(#item_small)]
+	local box	for _, _community in pairs(availableCommunities) do
+		if boxCommunity == nil or _community == community then
+			boxCommunity = boxes[math.random(#boxes)]
+			break
+		end
 	end
 
-	local spawn_list_small = community_small and item_by_community[community_small]
+	return boxCommunity and item_by_community[boxCommunity]
+end
+
+function ph_item_box:spawn_list(items_list)	
+	-- %25 more chance for all possible items
+	local ach = 1
+	if (game_achievements.has_achievement("infantile_pleasure")) then
+		ach = 1.33
+	end
+	
+	for k,v in pairs(items_list) do
+		if (v * ach > 0) then
+			local number = count_by_level[k] and math.random(count_by_level[k][1], count_by_level[k][2]) or math.random(0,1)
+			if (number > 0) then
+				create_items(obj, k, number, v * ach)
+			end
+		end
+	end
+end
+
+function ph_item_box:spawn_small_items(obj,who,spawn_ini)
+	local community_small
+	local communities = {"def_box", "small_box_generic", "small_box_full", "small_box_ussr", "small_box_nato", "small_box_army"}
+	local boxes = {"def_box", "small_box_generic", "small_box_full", "small_box_ussr", "small_box_nato", "small_box_army"}
+	local spawn_list_small = ph_item_box:get_spawn_list(community_small, communities, boxes)
 	if not (spawn_list_small) then
 		return 
 	end
 	
-	-- %25 more chance for all possible items
-	local ach = 1
-	if (game_achievements.has_achievement("infantile_pleasure")) then
-		ach = 1.33
-	end
-	
-	for k,v in pairs(spawn_list_small) do
-		if (v * ach > 0) then
-			local number = count_by_level[k] and math.random(count_by_level[k][1], count_by_level[k][2]) or math.random(0,1)
-			if (number > 0) then
-				create_items(obj, k, number, v * ach)
-			end
-		end
-	end
+	ph_item_box:spawn_list(spawn_list_small)
 end
 
 function ph_item_box:spawn_drugs(obj,who,spawn_ini)
 	local community_drugs
-
-	if (spawn_ini) then -- Disabled hardcoded items
-		--create_obligatory_items(obj,spawn_ini)
-		--community = spawn_ini:r_string_ex("drop_box","community")
-	end
-
-	if (community_drugs == nil or community_drugs == "med_box_low" or community_drugs == "med_box_advanced" or community_drugs == "med_box_high" or community_drugs == "small_box_science") then
-		local item_drugs = {"med_box_low", "med_box_advanced", "med_box_high", "small_box_science"}
-
-		community_drugs = item_drugs[math.random(#item_drugs)]
-	end
-
-	local spawn_list_drugs = community_drugs and item_by_community[community_drugs]
+	local communities = {"med_box_low", "small_box_genmed_box_advancederic", "med_box_high", "small_box_science"}
+	local boxes = {"med_box_low", "med_box_advanced", "med_box_high", "small_box_science"}
+	local spawn_list_drugs = ph_item_box:get_spawn_list(communicommunity_drugsty_small, communities, boxes)
 	if not (spawn_list_drugs) then
 		return 
 	end
-	
-	-- %25 more chance for all possible items
-	local ach = 1
-	if (game_achievements.has_achievement("infantile_pleasure")) then
-		ach = 1.33
-	end
-	
-	for k,v in pairs(spawn_list_drugs) do
-		if (v * ach > 0) then
-			local number = count_by_level[k] and math.random(count_by_level[k][1], count_by_level[k][2]) or math.random(0,1)
-			if (number > 0) then
-				create_items(obj, k, number, v * ach)
-			end
-		end
-	end
+
+	ph_item_box:spawn_list(spawn_list_drugs)
 end
 
 function ph_item_box:spawn_big_items(obj,who,spawn_ini)
 	local community_big
-	
-	if (spawn_ini) then -- Disabled hardcoded items
-		--create_obligatory_items(obj,spawn_ini)
-		--community = spawn_ini:r_string_ex("drop_box","community")
-	end
-
-	if (community_big == nil or community_big == "big_box_generic"  or community_big == "big_box_dungeons" or community_big == "big_box_arsenal") then
-		local item_big = {"big_box_generic", "big_box_dungeons", "big_box_arsenal"}
-		community_big = item_big[math.random(#item_big)]
-	end
-
-	local spawn_list_big = community_big and item_by_community[community_big]
+	local communities = {"big_box_generic", "big_box_dungeons", "big_box_arsenal"}
+	local boxes = {"big_box_generic", "big_box_dungeons", "big_box_arsenal"}
+	local spawn_list_big = ph_item_box:get_spawn_list(communicommunity_drugsty_small, communities, boxes)
 	if not (spawn_list_big) then
 		return 
 	end
-	
-	-- %25 more chance for all possible items
-	local ach = 1
-	if (game_achievements.has_achievement("infantile_pleasure")) then
-		ach = 1.33
-	end
-	
-	for k,v in pairs(spawn_list_big) do
-		if (v * ach > 0) then
-			local number = count_by_level[k] and math.random(count_by_level[k][1], count_by_level[k][2]) or math.random(0,1)
-			if (number > 0) then
-				create_items(obj, k, number, v * ach)
-			end
-		end
-	end
+
+	ph_item_box:spawn_list(spawn_list_big)
 end
 
 function create_items(obj, section, number, rnd)
