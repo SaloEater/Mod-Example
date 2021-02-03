@@ -67,7 +67,7 @@ function ph_item_box:get_spawn_list(boxCommunity, availableCommunities, boxes)
 		--community = spawn_ini:r_string_ex("drop_box","community")
 	end
 
-	local box	for _, _community in pairs(availableCommunities) do
+	for _, _community in pairs(availableCommunities) do
 		if boxCommunity == nil or _community == community then
 			boxCommunity = boxes[math.random(#boxes)]
 			break
