@@ -20,6 +20,8 @@ function init(obj)
 			obj:bind_object(generic_physics_binder(obj))
 		elseif (visual == [[dynamics\box\box_wood_02]]) then 
 			obj:bind_object(generic_physics_binder(obj))
+		elseif (visual == [[dynamics\box\box_paper]]) then 
+			obj:bind_object(generic_physics_binder(obj))
 		end
 	end
 end
@@ -155,10 +157,10 @@ function generic_physics_binder:death_callback(victim, who)
 				game_statistics.increment_npc_statistic(who,"boxes_smashed")
 			end
 		end
-		xr_box.get_box_manager():spawn_items(victim,who,ini)
+		xr_box.get_box_manager():spawn_small_items(victim,who,ini)
 	else
 		local visual = victim:get_visual_name()
-		local is_box = (visual == [[dynamics\box\box_metall_01]] or visual == [[dynamics\box\box_wood_01]] or visual == [[dynamics\box\box_wood_02]])
+		local is_box = (visual == [[dynamics\box\box_wood_01]] or visual == [[dynamics\box\box_wood_02]] or visual == [[dynamics\box\box_paper]] or visual == [[dynamics\box\box_metall_01]])
 		if (is_box) then
 			if (who) then 
 				if (who:id() == AC_ID) then
@@ -167,8 +169,24 @@ function generic_physics_binder:death_callback(victim, who)
 					game_statistics.increment_npc_statistic(who,"boxes_smashed")
 				end
 			end
-			if ((math.random(1,100)/100) < 0.5) then
-				xr_box.get_box_manager():spawn_items(victim,who)
+			local proba = (math.random(1,100)/100)
+			if proba < 0.5 then
+				if visual == [[dynamics\box\box_wood_01]] or visual == [[dynamics\box\box_wood_02]] then
+					xr_box.get_box_manager():spawn_big_items(victim,who)
+				end
+				if visual == [[dynamics\box\box_paper]] then 
+					xr_box.get_box_manager():spawn_drugs(victim,who)
+				end
+				if visual == [[dynamics\box\box_metall_01]] then
+					xr_box.get_box_manager():spawn_small_items(victim,who)
+				end
+			elseif proba > 0.8 and proba < 0.9 and visual == [[dynamics\box\box_paper]] then 
+				alife_create("m_rat_e", victim,who)
+			elseif proba > 0.9 and proba < 0.97 and visual == [[dynamics\box\box_paper]] then 
+				alife_create("m_tushkano_e", victim,who)
+			elseif proba > 0.97 and visual == [[dynamics\box\box_paper]] then 
+				alife_create("tushkano_weak", victim,who)
+				alife_create("tushkano_strong", victim,who)
 			end
 		end
 	end
